@@ -3,18 +3,21 @@
 
     WORKDIR /app
     COPY requirements.txt .
-    RUN pip install --no-cache-dir -r requirements.txt
+    RUN pip install --no-cache-dir --target=/python-packages -r requirements.txt
     COPY . .
     RUN chmod +x run.py
     
     # ---- Final Stage ----
-    FROM gcr.io/distroless/python3.11
+    FROM gcr.io/distroless/python3
     
     WORKDIR /app
+    
+    ENV PYTHONPATH=/python-packages
+    
     COPY --from=builder /app .
+    COPY --from=builder /python-packages /python-packages
     
-    # Use Distroless non-root user (UID 65532)
     USER nonroot
-    
     EXPOSE 5000
     CMD ["./run.py"]
+    

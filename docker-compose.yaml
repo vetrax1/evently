@@ -1,0 +1,44 @@
+x-default-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "5m"
+    max-file: "2"
+    tag: "{{.Name}}"
+
+networks:
+  evently-net:
+    driver: bridge
+
+services:
+  backend:
+    build:
+      context: ./evently-backend
+      dockerfile: Dockerfile
+    container_name: evently-backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - backend_data:/app/instance
+    networks:
+      - evently-net
+    restart: unless-stopped
+    logging: *logging
+
+
+  frontend:
+    build:
+      context: ./evently-frontend
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+    container_name: evently-frontend
+    ports:
+      - "9090:80"
+    networks:
+      - evently-net
+    restart: unless-stopped
+    logging: *logging
+
+
+volumes:
+  backend_data:
