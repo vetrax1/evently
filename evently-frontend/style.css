@@ -1,0 +1,83 @@
+/* evently-frontend/style.css */
+
+/* === Custom Animations === */
+
+@keyframes fade-in-down {
+    0% {
+      opacity: 0;
+      transform: translateY(-25px) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  @keyframes slide-in {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes pulse-slow {
+    0%, 100% {
+      opacity: 0.2;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.4;
+      transform: scale(1.05);
+    }
+  }
+  
+  @keyframes spin-slow {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* === Utility Classes === */
+  .animate-fade-in-down {
+    animation: fade-in-down 0.4s ease-out;
+  }
+  
+  .animate-slide-in {
+    animation: slide-in 0.5s ease-out;
+  }
+  
+  .animate-pulse-slow {
+    animation: pulse-slow 6s ease-in-out infinite;
+  }
+  
+  .animate-spin-slow {
+    animation: spin-slow 40s linear infinite;
+  }
+  
+  /* === Modal Transition === */
+  #modal {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  /* === Toast === */
+  #toast {
+    opacity: 0.95;
+  }
+  
+  /* === Fancy Buttons (Optional Customization) === */
+  button {
+    transition: all 0.3s ease;
+  }
+  
+  button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  }
+  

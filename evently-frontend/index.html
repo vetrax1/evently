@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Evently – Book Your Next Event</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="bg-gray-900 text-white font-sans scroll-smooth">
+
+    <!-- Navbar -->
+    <nav class="bg-black bg-opacity-70 fixed w-full z-50 backdrop-blur shadow">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-extrabold text-orange-400">🎫 Evently</h1>
+        <ul class="flex gap-6 text-sm uppercase tracking-wide">
+          <li><a href="#hero" class="hover:text-orange-400">Home</a></li>
+          <li><a href="#about" class="hover:text-orange-400">About</a></li>
+          <li><a href="#events" class="hover:text-orange-400">Events</a></li>
+          <li><a href="#contact" class="hover:text-orange-400">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section id="hero" class="h-screen bg-cover bg-center flex items-center justify-center relative" style="background-image: url('hero.jpg');">
+      <div class="absolute inset-0 bg-black bg-opacity-70"></div>
+      <div class="relative z-10 text-center px-6">
+        <h2 class="text-4xl md:text-5xl font-bold mb-2">One Stop</h2>
+        <h1 class="text-5xl md:text-6xl font-extrabold text-orange-400 mb-4">Event Planner</h1>
+        <p class="text-lg text-gray-200 mb-6">Every event should be perfect</p>
+        <div class="flex justify-center gap-4">
+          <a href="#about" class="px-6 py-3 bg-orange-500 text-white font-semibold rounded hover:bg-orange-600 transition">About Us</a>
+          <a href="#events" class="px-6 py-3 border border-orange-400 text-orange-400 font-semibold rounded hover:bg-orange-500 hover:text-white transition">Get Started</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="bg-white text-gray-900 py-20 px-6">
+      <div class="max-w-6xl mx-auto text-center">
+        <h2 class="text-4xl font-bold mb-6">Why Choose Evently?</h2>
+        <p class="text-lg mb-10 text-gray-600">Whether it's a wedding or tech conference, we help you plan and manage events with ease and elegance.</p>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="bg-gray-100 p-6 rounded-lg shadow hover:shadow-lg">
+            <img src="https://img.icons8.com/ios-filled/50/000000/planner.png" class="mx-auto mb-4" />
+            <h3 class="text-xl font-semibold mb-2">Smart Planning</h3>
+            <p>Schedule and organize events without stress using our intelligent tools.</p>
+          </div>
+          <div class="bg-gray-100 p-6 rounded-lg shadow hover:shadow-lg">
+            <img src="https://img.icons8.com/ios-filled/50/000000/people-working-together.png" class="mx-auto mb-4" />
+            <h3 class="text-xl font-semibold mb-2">Collaboration</h3>
+            <p>Manage vendors, speakers, and guests all in one place.</p>
+          </div>
+          <div class="bg-gray-100 p-6 rounded-lg shadow hover:shadow-lg">
+            <img src="https://img.icons8.com/ios-filled/50/000000/security-shield-green.png" class="mx-auto mb-4" />
+            <h3 class="text-xl font-semibold mb-2">Security</h3>
+            <p>Secure bookings, user data encryption, and peace of mind.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Events -->
+    <section id="events" class="bg-gray-100 text-gray-800 py-20 px-6">
+      <div class="max-w-6xl mx-auto text-center">
+        <h2 class="text-4xl font-bold mb-10">Upcoming Events</h2>
+        <div id="event-list" class="grid md:grid-cols-3 gap-8">
+          <!-- Dynamic Event Cards Here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center">
+      <div class="bg-white text-gray-800 p-8 rounded-lg w-full max-w-md">
+        <h2 class="text-2xl font-bold mb-4">Book for <span id="eventName">Event</span></h2>
+        <form onsubmit="submitBooking(event)">
+          <input type="text" id="name" placeholder="Your Name" required class="w-full mb-4 p-3 border border-gray-300 rounded" />
+          <input type="email" id="email" placeholder="Your Email" required class="w-full mb-4 p-3 border border-gray-300 rounded" />
+          <div class="flex justify-between">
+            <button type="button" onclick="closeModal()" class="px-4 py-2 border border-gray-500 rounded">Cancel</button>
+            <button type="submit" class="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600">Confirm</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Testimonials -->
+    <section id="contact" class="bg-white text-gray-900 py-20 px-6">
+      <div class="max-w-6xl mx-auto text-center">
+        <h2 class="text-4xl font-bold mb-10">What Attendees Say</h2>
+        <div class="grid md:grid-cols-2 gap-10">
+          <div class="bg-orange-50 p-6 rounded-lg shadow">
+            <p class="italic mb-4">“Booking my startup's launch event was unbelievably easy. The Evently UI and flow is better than anything I've seen.”</p>
+            <h4 class="font-semibold text-lg">— Bolu O., Tech Founder</h4>
+          </div>
+          <div class="bg-orange-50 p-6 rounded-lg shadow">
+            <p class="italic mb-4">“The design is so clean and professional — clients and guests thought we had hired a luxury planner!”</p>
+            <h4 class="font-semibold text-lg">— Ada N., Wedding Consultant</h4>
+          </div>
+        </div>
+      </div>
+    </section>
+
+        <!-- Admin: Add New Event -->
+    <section class="bg-gray-900 text-white py-16 px-6">
+        <div class="max-w-2xl mx-auto">
+        <h2 class="text-3xl font-bold mb-6 text-center">Admin: Add New Event</h2>
+        <form onsubmit="submitNewEvent(event)" class="space-y-4 bg-gray-800 p-6 rounded-lg shadow">
+            <input type="text" id="admin-title" placeholder="Event Title" required class="w-full p-3 rounded bg-gray-700 border border-gray-600" />
+            <input type="text" id="admin-location" placeholder="Location" required class="w-full p-3 rounded bg-gray-700 border border-gray-600" />
+            <input type="datetime-local" id="admin-date" required class="w-full p-3 rounded bg-gray-700 border border-gray-600" />
+            <input type="number" id="admin-seats" placeholder="Total Seats" required min="1" class="w-full p-3 rounded bg-gray-700 border border-gray-600" />
+            <button type="submit" class="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white rounded font-semibold">Create Event</button>
+        </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-center py-6 text-sm text-gray-400">
+      © 2025 Evently. All rights reserved.
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+      const API_BASE = "http://127.0.0.1:5000"; // Replace with your backend URL
+      let selectedEventId = null;
+
+      async function loadEvents() {
+    try {
+        const res = await fetch(`${API_BASE}/api/events`);
+        const events = await res.json();
+        const container = document.getElementById("event-list");
+        container.innerHTML = "";
+
+        events.forEach(event => {
+        const card = document.createElement("div");
+        card.className = "bg-white p-6 rounded-lg shadow hover:shadow-xl text-left";
+        card.innerHTML = `
+            <h3 class="text-xl font-semibold mb-2">${event.title}</h3>
+            <p class="text-sm text-gray-600 mb-1"><strong>Date:</strong> ${event.date}</p>
+            <p class="text-sm text-gray-600 mb-1"><strong>Location:</strong> ${event.location}</p>
+            <p class="text-sm text-gray-600 mb-4"><strong>Available:</strong> ${event.remaining_seats} / ${event.total_seats}</p>
+            <div class="flex gap-2">
+            <button onclick="openModal(${event.id}, '${event.title}')" class="flex-1 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600">Book Now</button>
+            <button onclick="deleteEvent(${event.id})" class="flex-1 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
+            </div>
+        `;
+        container.appendChild(card);
+        });
+
+        } catch (error) {
+            console.error("Error loading events:", error);
+        }
+    }
+
+      function openModal(eventId, title) {
+        selectedEventId = eventId;
+        document.getElementById("eventName").innerText = title;
+        document.getElementById("bookingModal").classList.remove("hidden");
+      }
+
+      function closeModal() {
+        document.getElementById("bookingModal").classList.add("hidden");
+      }
+
+      async function submitBooking(e) {
+        e.preventDefault();
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+
+        if (!name || !email || !selectedEventId) {
+          alert("All fields are required.");
+          return;
+        }
+
+        try {
+          const res = await fetch(`${API_BASE}/api/book/${selectedEventId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email }),
+          });
+
+          const result = await res.json();
+          if (res.status === 201) {
+            alert("✅ Booking successful!");
+            closeModal();
+            loadEvents(); // Refresh seat availability
+          } else {
+            alert(`❌ Error: ${result.error || "Unknown error"}`);
+          }
+        } catch (err) {
+          alert("❌ Could not complete booking. Try again.");
+          console.error(err);
+        }
+      }
+      async function submitNewEvent(e) {
+      e.preventDefault();
+
+      const title = document.getElementById("admin-title").value.trim();
+      const location = document.getElementById("admin-location").value.trim();
+      const date = document.getElementById("admin-date").value;
+      const seats = document.getElementById("admin-seats").value;
+
+      if (!title || !location || !date || !seats) {
+          alert("All fields are required.");
+          return;
+      }
+
+      try {
+          const res = await fetch(`${API_BASE}/api/events`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+              title,
+              location,
+              date,
+              total_seats: parseInt(seats)
+          }),
+          });
+
+          const result = await res.json();
+          if (res.status === 201) {
+          alert("✅ Event created successfully!");
+          document.getElementById("admin-title").value = "";
+          document.getElementById("admin-location").value = "";
+          document.getElementById("admin-date").value = "";
+          document.getElementById("admin-seats").value = "";
+          loadEvents(); // Refresh the event list
+          } else {
+          alert(`❌ Failed to create event: ${result.error || "Unknown error"}`);
+          }
+
+      } catch (error) {
+          alert("❌ Error: Could not connect to backend.");
+          console.error(error);
+      }
+    }
+
+        async function deleteEvent(eventId) {
+        const confirmDelete = confirm("Are you sure you want to delete this event?");
+        if (!confirmDelete) return;
+
+        try {
+        const res = await fetch(`${API_BASE}/api/events/${eventId}`, {
+            method: "DELETE"
+        });
+
+        const result = await res.json();
+        if (res.status === 200) {
+            alert("✅ Event deleted!");
+            loadEvents(); // Refresh event list
+        } else {
+            alert(`❌ Failed to delete: ${result.error || "Unknown error"}`);
+        }
+        } catch (error) {
+        alert("❌ Could not connect to backend.");
+        console.error(error);
+        }
+    }
+
+      window.onload = loadEvents;
+    </script>
+  </body>
+</html>

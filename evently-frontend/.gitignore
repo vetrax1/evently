@@ -1,0 +1,17 @@
+# Dependency directory
+node_modules/
+
+# Build output (if using Vite or similar)
+dist/
+
+# Env file
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VSCode / IDE files
+.vscode/
+.idea/
+
