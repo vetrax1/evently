@@ -5,12 +5,10 @@ pipeline {
     DOCKER_IMAGE_BACKEND = 'anunukemsam/evently-backend'
     DOCKER_IMAGE_FRONTEND = 'anunukemsam/evently-frontend'
     TAG = "${GIT_COMMIT.take(8)}"
-    DOCKER_CREDENTIALS_ID = 'dockerhub-creds'
     SNYK_TOKEN = credentials('snyk-token')
-    SSH_CREDENTIALS_ID = 'vm-ssh-key'
     VM_USER = 'your-vm-user'
     VM_HOST = 'your.vm.ip.address'
-    VM_DEPLOY_DIR = '/home/your-vm-user'
+    VM_DEPLOY_DIR = '/home/vetrax'
   }
 
   stages {
@@ -62,6 +60,71 @@ pipeline {
             snyk container test ${DOCKER_IMAGE_FRONTEND}:${TAG} --severity-threshold=high
           """
           echo "Both backend and frontend images scanned successfully."
+        }
+      }
+    }
+    stage('Push Docker Images to Docker Hub') {
+      when {
+        anyOf {
+          branch 'main'
+          branch 'develop'
+        }
+      }
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',usernameVariable: 'DOCKER_USER',passwordVariable: 'DOCKER_PASS')]) {
+          script {
+            echo "Authenticating with DockerHub..."
+            sh """
+              echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+            """
+            echo "Pushing backend image: ${DOCKER_IMAGE_BACKEND}:${TAG}"
+            echo "Pushing frontend image: ${DOCKER_IMAGE_FRONTEND}:${TAG}"
+            sh """
+              docker push ${DOCKER_IMAGE_BACKEND}:${TAG}
+              docker push ${DOCKER_IMAGE_FRONTEND}:${TAG}
+            """
+            echo "Images successfully pushed to dockerhub"
+          }
+        }
+      }
+    }
+    stage('Deploy to Staging') {
+      when {
+        branch 'develop'
+      }
+      steps {
+        sshagent(['vm-ssh-key']) {
+          script {
+            sh """
+              ssh -o StrictHostKeyChecking=no ${VM_USER}@${VM_HOST} << EOF
+                echo "Starting deploy on staging VM..."
+                cd ${VM_DEPLOY_DIR}/evently
+                docker compose pull
+                docker compose up -d --remove-orphans
+                docker image prune -f || true
+                echo "Staging deployment complete!"
+              EOF
+            """
+          }
+        }
+      }
+    }
+    stage('Deploy to Prod-k8s') {
+      when {
+        branch 'main'
+      }
+      steps {
+        sshagent(['vm-ssh-key']) {
+          script {
+            sh """
+              ssh -o StrictHostKeyChecking=no ${VM_USER}@${VM_HOST} << EOF
+                kubectl apply -f k8s/deployment.yaml
+                kubectl apply -f k8s/service.yaml
+                kubectl apply -f k8s/hpa.yaml
+                kubectl rollout status deployment/evently-backend
+              EOF
+            """
+          }
         }
       }
     }
