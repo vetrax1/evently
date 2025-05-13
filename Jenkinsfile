@@ -1,3 +1,13 @@
+properties([
+  parameters([
+    booleanParam(
+      name: 'ROLLBACK',
+      defaultValue: false,
+      description: 'Check this box to trigger a rollback on the production Kubernetes deployment.'
+    )
+  ])
+])
+
 pipeline {
   agent any
 
@@ -116,12 +126,46 @@ pipeline {
       steps {
         sshagent(['vm-ssh-key']) {
           script {
+            echo "Copying Kubernetes manifest to production VM..."
+            sh """
+              scp -o StrictHostKeyChecking=no -r k8s ${VM_USER}@${VM_HOST}:${VM_DEPLOY_DIR}
+            """
             sh """
               ssh -o StrictHostKeyChecking=no ${VM_USER}@${VM_HOST} << EOF
-                kubectl apply -f k8s/deployment.yaml
-                kubectl apply -f k8s/service.yaml
-                kubectl apply -f k8s/hpa.yaml
+                cd ${VM_DEPLOY_DIR}/k8s
+                kubectl apply -f backend-deployment.yaml
+                kubectl apply -f backend-service.yaml
+                kubectl apply -f hpa.yaml
+                echo "Waiting for rollout to complete..."
                 kubectl rollout status deployment/evently-backend
+                echo "Deploying frontend..."
+                kubectl apply -f frontend-deployment.yaml
+                kubectl apply -f frontend-service.yaml
+                echo "Waiting for rollout to complete..."
+                kubectl rollout status deployment/evently-frontend
+                echo "Production deployment complete!"
+              EOF
+            """
+          }
+        }
+      }
+    }
+    stage('Rollback') {
+      when {
+        branch 'main'
+        expression { return params.ROLLBACK == true }
+      }
+      steps {
+        sshagent(['vm-ssh-key']) {
+          script {
+            echo "Initiating rollback on production Kubernetes cluster..."
+            sh """
+              ssh -o StrictHostKeyChecking=no ${VM_USER}@${VM_HOST} << EOF
+                echo "Rolling back backend deployment..."
+                kubectl rollout undo deployment/evently-backend
+                echo "Rolling back frontend deployment..."
+                kubectl rollout undo deployment/evently-frontend
+                echo "Rollback complete."
               EOF
             """
           }
