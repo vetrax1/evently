@@ -15,7 +15,6 @@ pipeline {
     DOCKER_IMAGE_BACKEND = 'anunukemsam/evently-backend'
     DOCKER_IMAGE_FRONTEND = 'anunukemsam/evently-frontend'
     TAG = "${GIT_COMMIT.take(8)}"
-    SNYK_TOKEN = credentials('snyk-token')
     VM_USER = 'vetrax'
     STAGING_VM_HOST = '192.168.4.127'
     PROD_VM_HOST = '192.168.4.93'
@@ -71,13 +70,15 @@ pipeline {
     stage('Scan Docker Images') {
       steps {
         script {
-          echo "Starting vulnerability scan on Docker Images..."
-          sh """
-            snyk auth ${SNYK_TOKEN}
-            snyk container test ${DOCKER_IMAGE_BACKEND}:${TAG} --severity-threshold=high
-            snyk container test ${DOCKER_IMAGE_FRONTEND}:${TAG} --severity-threshold=high
-          """
-          echo "Both backend and frontend images scanned successfully."
+            withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
+            echo "Starting vulnerability scan on Docker Images..."
+            sh """
+              snyk auth $SNYK_TOKEN
+              snyk container test ${DOCKER_IMAGE_BACKEND}:${TAG} --severity-threshold=high
+              snyk container test ${DOCKER_IMAGE_FRONTEND}:${TAG} --severity-threshold=high
+            """
+            echo "Both backend and frontend images scanned successfully."
+          }
         }
       }
     }
