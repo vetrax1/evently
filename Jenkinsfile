@@ -16,22 +16,30 @@ pipeline {
     DOCKER_IMAGE_FRONTEND = 'anunukemsam/evently-frontend'
     TAG = "${GIT_COMMIT.take(8)}"
     SNYK_TOKEN = credentials('snyk-token')
-    VM_USER = 'your-vm-user'
-    VM_HOST = 'your.vm.ip.address'
+    VM_USER = 'vetrax'
+    STAGING_VM_HOST = '192.168.4.127'
+    PROD_VM_HOST = '192.168.4.93'
     VM_DEPLOY_DIR = '/home/vetrax'
   }
 
   stages {
+    stage('Build Infor') {
+      steps {
+        echo "Branch: ${env.BRANCH_NAME}"
+        echo "Commit: ${env.GIT_COMMIT}"
+        echo "Image Tags: ${TAG}"
+      }
+    }
     stage('Init Stage') {
       steps {
         script {
           echo "Branch detected: ${env.BRANCH_NAME}"
           if (env.BRANCH_NAME == 'main') {
-            env.DOCKER_IMAGE_BACKEND == 'Dockerfile.prod'
-            env.DOCKER_IMAGE_FRONTEND == 'Dockerfile'
+            env.DOCKERFILE_BACKEND = 'Dockerfile.prod'
+            env.DOCKERFILE_FRONTEND = 'Dockerfile'
           } else {
-            env.DOCKER_IMAGE_BACKEND == 'Dockerfile'
-            env.DOCKER_IMAGE_FRONTEND == 'Dockerfile'
+            env.DOCKERFILE_BACKEND = 'Dockerfile'
+            env.DOCKERFILE_FRONTEND = 'Dockerfile'
           }
           echo "Backend Dockerfile: ${env.DOCKERFILE_BACKEND}"
           echo "Frontend Dockerfile: ${env.DOCKERFILE_FRONTEND}"
@@ -106,7 +114,7 @@ pipeline {
         sshagent(['vm-ssh-key']) {
           script {
             sh """
-              ssh -o StrictHostKeyChecking=no ${VM_USER}@${VM_HOST} << EOF
+              ssh -o StrictHostKeyChecking=no ${VM_USER}@${STAGING_VM_HOST} << EOF
                 echo "Starting deploy on staging VM..."
                 cd ${VM_DEPLOY_DIR}/evently
                 docker compose pull
@@ -128,10 +136,10 @@ pipeline {
           script {
             echo "Copying Kubernetes manifest to production VM..."
             sh """
-              scp -o StrictHostKeyChecking=no -r k8s ${VM_USER}@${VM_HOST}:${VM_DEPLOY_DIR}
+              scp -o StrictHostKeyChecking=no -r k8s ${VM_USER}@${PROD_VM_HOST}:${VM_DEPLOY_DIR}
             """
             sh """
-              ssh -o StrictHostKeyChecking=no ${VM_USER}@${VM_HOST} << EOF
+              ssh -o StrictHostKeyChecking=no ${VM_USER}@${PROD_VM_HOST} << EOF
                 cd ${VM_DEPLOY_DIR}/k8s
                 sed -i 's|<IMAGE_TAG>|${TAG}|g' backend-deployment.yaml
                 kubectl apply -f backend-deployment.yaml
@@ -163,7 +171,7 @@ pipeline {
           script {
             echo "Initiating rollback on production Kubernetes cluster..."
             sh """
-              ssh -o StrictHostKeyChecking=no ${VM_USER}@${VM_HOST} << EOF
+              ssh -o StrictHostKeyChecking=no ${VM_USER}@${PROD_VM_HOST} << EOF
                 echo "Rolling back backend deployment..."
                 kubectl rollout undo deployment/evently-backend
                 echo "Rolling back frontend deployment..."
@@ -178,6 +186,12 @@ pipeline {
   }
 
   post {
+    success {
+      echo "Build & deploy succeeded."
+    }
+    failure {
+      echo "Pipeline failed. Please check logs."
+    }
     always {
       echo "Pipeline completed for branch: ${env.BRANCH_NAME}"
     }
