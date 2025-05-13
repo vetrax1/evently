@@ -16,8 +16,7 @@
     
     COPY --from=builder /app .
     COPY --from=builder /python-packages /python-packages
-    
-    USER nonroot
+
     EXPOSE 5000
-    CMD ["./run.py"]
+    CMD ["python3", "run.py"]
     

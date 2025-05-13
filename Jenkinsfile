@@ -115,14 +115,14 @@ pipeline {
         sshagent(['vm-ssh-key']) {
           script {
             sh """
-              ssh -o StrictHostKeyChecking=no ${VM_USER}@${STAGING_VM_HOST} << 'EOF'
+              ssh -o StrictHostKeyChecking=no ${VM_USER}@${STAGING_VM_HOST} << '
                 echo "Starting deploy on staging VM..."
                 cd ${VM_DEPLOY_DIR}/evently
                 docker compose pull
                 docker compose up -d --remove-orphans
                 docker image prune -f || true
                 echo "Staging deployment complete!"
-              EOF
+              '
             """
           }
         }
@@ -140,7 +140,7 @@ pipeline {
               scp -o StrictHostKeyChecking=no -r k8s ${VM_USER}@${PROD_VM_HOST}:${VM_DEPLOY_DIR}
             """
             sh """
-              ssh -o StrictHostKeyChecking=no ${VM_USER}@${PROD_VM_HOST} << 'EOF'
+              ssh -o StrictHostKeyChecking=no ${VM_USER}@${PROD_VM_HOST} << '
                 cd ${VM_DEPLOY_DIR}/k8s
                 sed -i 's|<IMAGE_TAG>|${TAG}|g' backend-deployment.yaml
                 kubectl apply -f backend-deployment.yaml
@@ -156,7 +156,7 @@ pipeline {
                 echo "Waiting for rollout to complete..."
                 kubectl rollout status deployment/frontend-deployment
                 echo "Production deployment complete!"
-              EOF
+              '
             """
           }
         }
@@ -172,13 +172,13 @@ pipeline {
           script {
             echo "Initiating rollback on production Kubernetes cluster..."
             sh """
-              ssh -o StrictHostKeyChecking=no ${VM_USER}@${PROD_VM_HOST} << EOF
+              ssh -o StrictHostKeyChecking=no ${VM_USER}@${PROD_VM_HOST} << '
                 echo "Rolling back backend deployment..."
                 kubectl rollout undo deployment/evently-backend
                 echo "Rolling back frontend deployment..."
                 kubectl rollout undo deployment/evently-frontend
                 echo "Rollback complete."
-              EOF
+              '
             """
           }
         }
