@@ -1,2 +1,2 @@
 Testing branches
-This is from the develop branche
+This is from the develop branch
