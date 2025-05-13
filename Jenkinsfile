@@ -142,7 +142,7 @@ pipeline {
             sh """
               ssh -o StrictHostKeyChecking=no ${VM_USER}@${PROD_VM_HOST} << '
                 cd ${VM_DEPLOY_DIR}/k8s
-                sed -i 's|<IMAGE_TAG>|${TAG}|g' backend-deployment.yaml
+                sed -i "s|<IMAGE_TAG>|${TAG}|g" backend-deployment.yaml
                 kubectl apply -f backend-deployment.yaml
                 kubectl apply -f backend-service.yaml
                 kubectl apply -f hpa.yaml
@@ -150,7 +150,7 @@ pipeline {
                 kubectl rollout status deployment/backend-deployment
 
                 echo "Deploying frontend..."
-                sed -i 's|<IMAGE_TAG>|${TAG}|g' frontend-deployment.yaml
+                sed -i "s|<IMAGE_TAG>|${TAG}|g" frontend-deployment.yaml
                 kubectl apply -f frontend-deployment.yaml
                 kubectl apply -f frontend-service.yaml
                 echo "Waiting for rollout to complete..."
