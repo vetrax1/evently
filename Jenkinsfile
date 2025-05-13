@@ -115,7 +115,7 @@ pipeline {
         sshagent(['vm-ssh-key']) {
           script {
             sh """
-              ssh -o StrictHostKeyChecking=no ${VM_USER}@${STAGING_VM_HOST} << EOF
+              ssh -o StrictHostKeyChecking=no ${VM_USER}@${STAGING_VM_HOST} << 'EOF'
                 echo "Starting deploy on staging VM..."
                 cd ${VM_DEPLOY_DIR}/evently
                 docker compose pull
@@ -140,21 +140,21 @@ pipeline {
               scp -o StrictHostKeyChecking=no -r k8s ${VM_USER}@${PROD_VM_HOST}:${VM_DEPLOY_DIR}
             """
             sh """
-              ssh -o StrictHostKeyChecking=no ${VM_USER}@${PROD_VM_HOST} << EOF
+              ssh -o StrictHostKeyChecking=no ${VM_USER}@${PROD_VM_HOST} << 'EOF'
                 cd ${VM_DEPLOY_DIR}/k8s
                 sed -i 's|<IMAGE_TAG>|${TAG}|g' backend-deployment.yaml
                 kubectl apply -f backend-deployment.yaml
                 kubectl apply -f backend-service.yaml
                 kubectl apply -f hpa.yaml
                 echo "Waiting for rollout to complete..."
-                kubectl rollout status deployment/evently-backend
+                kubectl rollout status deployment/backend-deployment
 
                 echo "Deploying frontend..."
                 sed -i 's|<IMAGE_TAG>|${TAG}|g' frontend-deployment.yaml
                 kubectl apply -f frontend-deployment.yaml
                 kubectl apply -f frontend-service.yaml
                 echo "Waiting for rollout to complete..."
-                kubectl rollout status deployment/evently-frontend
+                kubectl rollout status deployment/frontend-deployment
                 echo "Production deployment complete!"
               EOF
             """
