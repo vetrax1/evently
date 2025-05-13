@@ -50,7 +50,7 @@ pipeline {
         script {
           echo "Building backend image from ${env.BRANCH_NAME}..."
           sh """
-            docker build -f ${env.DOCKERFILE_BACKEND} -t ${env.DOCKER_IMAGE_BACKEND}:${TAG} evently-backend
+            docker build -f evently-backend/${env.DOCKERFILE_BACKEND} -t ${env.DOCKER_IMAGE_BACKEND}:${TAG} evently-backend
           """
           echo "Backend image successfully build and tagged: ${env.DOCKER_IMAGE_BACKEND}:${TAG}"
         }
@@ -61,7 +61,7 @@ pipeline {
         script {
           echo "Building frontend image from ${env.BRANCH_NAME}..."
           sh """
-            docker build -f ${env.DOCKERFILE_FRONTEND} -t ${env.DOCKER_IMAGE_FRONTEND}:${TAG} evently-frontend
+            docker build -f evently-frontend/${env.DOCKERFILE_FRONTEND} -t ${env.DOCKER_IMAGE_FRONTEND}:${TAG} evently-frontend
           """
           echo "Frontend image successfully build and tagged: ${env.DOCKER_IMAGE_FRONTEND}:${TAG}"
         }
