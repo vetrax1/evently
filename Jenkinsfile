@@ -141,7 +141,7 @@ pipeline {
               scp -o StrictHostKeyChecking=no -r k8s ${VM_USER}@${PROD_VM_HOST}:${VM_DEPLOY_DIR}
             """
             sh """
-              ssh -o StrictHostKeyChecking=no ${VM_USER}@${PROD_VM_HOST} << '
+              ssh -o StrictHostKeyChecking=no ${VM_USER}@${PROD_VM_HOST} << EOF
                 cd ${VM_DEPLOY_DIR}/k8s
                 sed -i "s|<IMAGE_TAG>|${TAG}|g" backend-deployment.yaml
                 kubectl apply -f backend-deployment.yaml
@@ -157,7 +157,7 @@ pipeline {
                 echo "Waiting for rollout to complete..."
                 kubectl rollout status deployment/frontend-deployment
                 echo "Production deployment complete!"
-              '
+              EOF
             """
           }
         }
