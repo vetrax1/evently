@@ -115,14 +115,15 @@ pipeline {
         sshagent(['vm-ssh-key']) {
           script {
             sh """
-              ssh -o StrictHostKeyChecking=no ${VM_USER}@${STAGING_VM_HOST} << '
+              ssh -o StrictHostKeyChecking=no ${VM_USER}@${STAGING_VM_HOST} << "
                 echo "Starting deploy on staging VM..."
+                echo 'TAG=${TAG}' > ${VM_DEPLOY_DIR}/evently/.env
                 cd ${VM_DEPLOY_DIR}/evently
                 docker compose pull
                 docker compose up -d --remove-orphans
                 docker image prune -f || true
                 echo "Staging deployment complete!"
-              '
+              "
             """
           }
         }
