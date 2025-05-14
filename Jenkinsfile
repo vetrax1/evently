@@ -1,15 +1,12 @@
-properties([
-  parameters([
+pipeline {
+  agent any
+  parameters {
     booleanParam(
       name: 'ROLLBACK',
       defaultValue: false,
       description: 'Check this box to trigger a rollback on the production Kubernetes deployment.'
     )
-  ])
-])
-
-pipeline {
-  agent any
+  }
 
   environment {
     DOCKER_IMAGE_BACKEND = 'anunukemsam/evently-backend'
