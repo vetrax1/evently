@@ -141,23 +141,23 @@ pipeline {
               scp -o StrictHostKeyChecking=no -r k8s ${VM_USER}@${PROD_VM_HOST}:${VM_DEPLOY_DIR}
             """
             sh """
-              ssh -o StrictHostKeyChecking=no ${VM_USER}@${PROD_VM_HOST} << EOF
-                cd ${VM_DEPLOY_DIR}/k8s
-                sed -i "s|<IMAGE_TAG>|${TAG}|g" backend-deployment.yaml
-                kubectl apply -f backend-deployment.yaml
-                kubectl apply -f backend-service.yaml
-                kubectl apply -f hpa.yaml
-                echo "Waiting for rollout to complete..."
-                kubectl rollout status deployment/backend-deployment
+              ssh -o StrictHostKeyChecking=no ${VM_USER}@${PROD_VM_HOST} '
+                cd ${VM_DEPLOY_DIR}/k8s &&
+                sed -i "s|<IMAGE_TAG>|${TAG}|g" backend-deployment.yaml &&
+                kubectl apply -f backend-deployment.yaml &&
+                kubectl apply -f backend-service.yaml &&
+                kubectl apply -f hpa.yaml &&
+                echo "Waiting for rollout to complete..." &&
+                kubectl rollout status deployment/backend-deployment &&
 
-                echo "Deploying frontend..."
-                sed -i "s|<IMAGE_TAG>|${TAG}|g" frontend-deployment.yaml
-                kubectl apply -f frontend-deployment.yaml
-                kubectl apply -f frontend-service.yaml
-                echo "Waiting for rollout to complete..."
-                kubectl rollout status deployment/frontend-deployment
+                echo "Deploying frontend..." &&
+                sed -i "s|<IMAGE_TAG>|${TAG}|g" frontend-deployment.yaml &&
+                kubectl apply -f frontend-deployment.yaml &&
+                kubectl apply -f frontend-service.yaml &&
+                echo "Waiting for rollout to complete..." &&
+                kubectl rollout status deployment/frontend-deployment &&
                 echo "Production deployment complete!"
-              EOF
+              '
             """
           }
         }
