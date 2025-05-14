@@ -19,63 +19,36 @@ pipeline {
   }
 
   stages {
-    stage('Build Infor') {
+    stage('Build Info') {
       steps {
-        echo "Branch: ${env.BRANCH_NAME}"
-        echo "Commit: ${env.GIT_COMMIT}"
-        echo "Image Tags: ${TAG}"
+        load 'jenkins-scripts/build-info.groovy'
       }
     }
     stage('Init Stage') {
       steps {
         script {
-          echo "Branch detected: ${env.BRANCH_NAME}"
-          if (env.BRANCH_NAME == 'main') {
-            env.DOCKERFILE_BACKEND = 'Dockerfile.prod'
-            env.DOCKERFILE_FRONTEND = 'Dockerfile'
-          } else {
-            env.DOCKERFILE_BACKEND = 'Dockerfile'
-            env.DOCKERFILE_FRONTEND = 'Dockerfile'
-          }
-          echo "Backend Dockerfile: ${env.DOCKERFILE_BACKEND}"
-          echo "Frontend Dockerfile: ${env.DOCKERFILE_FRONTEND}"
+          load 'jenkins-scripts/init-stage.groovy'
         }
       }
     }
     stage('Build Backend Image') {
       steps {
         script {
-          echo "Building backend image from ${env.BRANCH_NAME}..."
-          sh """
-            docker build -f evently-backend/${env.DOCKERFILE_BACKEND} -t ${env.DOCKER_IMAGE_BACKEND}:${TAG} evently-backend
-          """
-          echo "Backend image successfully build and tagged: ${env.DOCKER_IMAGE_BACKEND}:${TAG}"
+          load 'jenkins-scripts/build-backend.groovy'
         }
       }
     }
     stage('Build Frontend Image') {
       steps {
         script {
-          echo "Building frontend image from ${env.BRANCH_NAME}..."
-          sh """
-            docker build -f evently-frontend/${env.DOCKERFILE_FRONTEND} -t ${env.DOCKER_IMAGE_FRONTEND}:${TAG} evently-frontend
-          """
-          echo "Frontend image successfully build and tagged: ${env.DOCKER_IMAGE_FRONTEND}:${TAG}"
+          load 'jenkins-scripts/build-frontend.groovy'
         }
       }
     }
     stage('Scan Docker Images') {
       steps {
         script {
-            withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
-            echo "Starting vulnerability scan on Docker Images..."
-            sh """
-              snyk auth $SNYK_TOKEN
-              snyk container test ${DOCKER_IMAGE_BACKEND}:${TAG} --severity-threshold=high
-              snyk container test ${DOCKER_IMAGE_FRONTEND}:${TAG} --severity-threshold=high
-            """
-            echo "Both backend and frontend images scanned successfully."
-          }
+          load 'jenkins-scripts/scan-images.groovy'
         }
       }
     }
