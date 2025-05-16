@@ -31,7 +31,7 @@
 
 ## 🏗️ CI/CD Architecture
 
-![Evently CI/CD Architecture](images/ci-cd-diagram.png)
+![Evently CI/CD Architecture](Images/ci-cd-diagram.png)
 
 
 ---
