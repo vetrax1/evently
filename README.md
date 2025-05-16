@@ -29,17 +29,10 @@
 
 ---
 
-## 🌐 Architecture Overview
+## 🏗️ CI/CD Architecture
 
-```
-[User]
-   ↓
-[Frontend UI - Tailwind + HTML]
-   ↓ (REST API)
-[Flask Backend API]
-   ↓
-[SQLite DB]
-```
+![Evently CI/CD Architecture](images/ci-cd-diagram.png)
+
 
 ---
 
