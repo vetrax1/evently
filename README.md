@@ -83,12 +83,6 @@ python3 -m http.server 9090
 
 ---
 
-## 🎨 Screenshots
-
-> *(Add screenshots of the landing page, events list, booking modal, and admin form)*
-
----
-
 ## 🔐 Environment Variables
 
 | File        | Variable      | Description        |
@@ -106,17 +100,6 @@ python3 -m http.server 9090
 | POST   | `/api/events`            | Create a new event |
 | POST   | `/api/book/<event_id>`   | Book a seat        |
 | POST   | `/api/cancel/<event_id>` | Cancel a booking   |
-
----
-
-## 🧐 Future Improvements
-
-* [ ] Dockerize frontend and backend
-* [ ] Add Kubernetes deployment support
-* [ ] Integrate Jenkins CI/CD pipeline
-* [ ] Add admin authentication
-* [ ] Switch from SQLite to PostgreSQL
-* [ ] Email confirmation for bookings
 
 ---
 
