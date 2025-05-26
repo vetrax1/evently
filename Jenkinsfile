@@ -1,12 +1,16 @@
 pipeline {
   agent any
+
   stages {
-    stage('Capture Environment') {
+    stage("Init") {
       steps {
-        sh 'env > $JENKINS_HOME/workspace/context_env'
+        script {
+          sh "env >> context_env"
+          archiveArtifacts artifacts: 'context_env'
+        }
       }
     }
-    stage('Trigger Builder') {
+    stage("Trigger Builder") {
       steps {
         build job: 'evently-builder'
       }
